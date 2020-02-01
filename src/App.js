@@ -27,7 +27,9 @@ function App({props}) {
     cod_ciudad: ''
   });
   const [climaCiudad, guardarClimaCiudad] = useState([]);
-  const [cargando, guardarCargando] = useState(true); 
+  const [cargando, guardarCargando] = useState(false); 
+
+  const [mostrarInfo, guardarMostrarInfo] = useState(false); 
 
   useEffect(() => {
     const consultarAPI = async () => {
@@ -76,9 +78,42 @@ function App({props}) {
     const resultado = await response.json(); 
 
     console.log(resultado);
-    guardarClimaCiudad(resultado);
-    guardarCargando(false); 
+
+    guardarMostrarInfo(false);
+
+    guardarCargando(true);
+
+    setTimeout(() => {
+      guardarClimaCiudad(resultado);
+      guardarCargando(false);
+      guardarMostrarInfo(true); 
+    }, 1000);
   }
+
+  let componente; 
+
+  if(mostrarInfo)
+  {
+    
+    componente = 
+      <Fragment>
+        <div className="animated fadeIn">
+          <h1>{climaCiudad.Estacion}</h1>
+          <span>Temperatura: {climaCiudad.Temp}ºC</span>   <span>Humedad: {climaCiudad.Humedad}%</span>
+          <h5>Estado: {climaCiudad.Estado}</h5>
+          <p>Hora Ultimo Update: {climaCiudad.HoraUpdate}</p>
+        </div>
+      </Fragment>
+  }else if(cargando)
+  {
+    componente = <div class="spinner"></div> 
+  }else{
+
+    componente = null; 
+  }
+
+      
+  
 
 
   return (
@@ -98,7 +133,10 @@ function App({props}) {
 <Fragment>
     <form
       onSubmit={consultar}>
+        <InputLabel id="demo-simple-select-helper-label">Selecciona Ciudad</InputLabel>
     <Select
+      labelId="demo-simple-select-helper-label"
+      id="demo-simple-select-helper"
       onChange={handleChange}
       name="cod_ciudad"
       style={{width:'200px',height:'50px', marginRight:'2em'}}>
@@ -114,16 +152,9 @@ function App({props}) {
       color="secondary"
       style={{height:'45px'}}>Consultar</Button>
     </form>
-      {cargando ? <div class="spinner"></div> : 
-      <Fragment>
-            <h1>{climaCiudad.Estacion}</h1>
-            <span>Temperatura: {climaCiudad.Temp}</span>   <span>Humedad: {climaCiudad.Humedad}</span>
-            <h5>Estado: {climaCiudad.Estado}</h5>
-            <p>Hora Ultimo Update: {climaCiudad.HoraUpdate}</p>
-      </Fragment>
-      
-      
-      }
+
+    {componente}
+
     
     </Fragment>
     

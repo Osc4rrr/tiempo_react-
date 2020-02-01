@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
+import { MenuItem } from '@material-ui/core';
 
 const styles = theme => ({
   container: 
@@ -26,6 +27,7 @@ function App({props}) {
     cod_ciudad: ''
   });
   const [climaCiudad, guardarClimaCiudad] = useState([]);
+  const [cargando, guardarCargando] = useState(true); 
 
   useEffect(() => {
     const consultarAPI = async () => {
@@ -75,6 +77,7 @@ function App({props}) {
 
     console.log(resultado);
     guardarClimaCiudad(resultado);
+    guardarCargando(false); 
   }
 
 
@@ -101,7 +104,7 @@ function App({props}) {
       style={{width:'200px',height:'50px', marginRight:'2em'}}>
       
       {ciudades.map(ciudad => (
-        <option value={ciudad.Codigo}>{ciudad.Estacion}</option>
+        <MenuItem value={ciudad.Codigo}>{ciudad.Estacion}</MenuItem>
       ))}
     </Select>
 
@@ -111,11 +114,17 @@ function App({props}) {
       color="secondary"
       style={{height:'45px'}}>Consultar</Button>
     </form>
-
-      <h1>{climaCiudad.Estacion}</h1>
-      <span>Temperatura: {climaCiudad.Temp}</span>   <span>Humedad: {climaCiudad.Humedad}</span>
-      <h5>Estado: {climaCiudad.Estado}</h5>
-      <p>Hora Ultimo Update: {climaCiudad.HoraUpdate}</p>
+      {cargando ? <div class="spinner"></div> : 
+      <Fragment>
+            <h1>{climaCiudad.Estacion}</h1>
+            <span>Temperatura: {climaCiudad.Temp}</span>   <span>Humedad: {climaCiudad.Humedad}</span>
+            <h5>Estado: {climaCiudad.Estado}</h5>
+            <p>Hora Ultimo Update: {climaCiudad.HoraUpdate}</p>
+      </Fragment>
+      
+      
+      }
+    
     </Fragment>
     
     </Grid>
